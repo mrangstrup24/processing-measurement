@@ -46,20 +46,20 @@ print(f'starting heading: {starting_heading}')
 while time_elapsed < 3:
     rvr.update_sensors()
     time_elapsed = time.monotonic() - starting_time
-    rvr.setMotors(-110, 110)
+    rvr.setMotors(-130, 130)
 
     heading = rvr.get_heading()
 
     light_data.append([time_elapsed, light_sensor.value, heading])
 
-    time.sleep(0.01)
+    time.sleep(0.02)
     print(light_data[-1])
-    
+
     light_data.sort(key=return_heading)
-    
+
     for row in light_data:
         row[1] = float(row[1])
-  
+
     for row in light_data:
         line_count = 0
         if (line_count < AVERAGE_COUNT):
@@ -69,20 +69,52 @@ while time_elapsed < 3:
             #print(f'{type(smoothing_values)}, {type(row[1])}')
             averaged = float(sum(smoothing_values)) + float(row[1]) / float(len(smoothing_values)+1)
             average_values.append([row[2],averaged])
-        
+
         smoothing_values.pop(0)
         smoothing_values.append(row[1])
         line_count += 1
-    
-average_values.sort(key=return_light)    
-print(average_values[0][1])
+
+rvr.setMotors(0, 0)
+
+average_values.sort(key=return_light)
+print(f'Value of {average_values[0][1]} at heading {average_values[0][0]}')
 
 rvr.update_sensors()
 
+tolerance = 4
+smoothed_heading = rvr.get_heading()
+smoothies = []
+smoothies.append(rvr.get_heading())
+"""
+while not (smoothed_heading < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance):
+"""
+while not (rvr.get_heading() < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance):
+    rvr.update_sensors()
+    print(rvr.get_heading)
+    
+    """"
+    smoothed_heading = (float(sum(smoothies)) + rvr.get_heading()) / float(len(smoothies)+1)
+    print(smoothed_heading)
+    print('length of smoothies: ' + str(len(smoothies)))
+    print('difference: ' + str(smoothed_heading-average_values[0][0]))
+    
+    if len(smoothies)+1 > 1000:
+        smoothies.pop(0)
+    smoothies.append(rvr.get_heading())
+    """
+    rvr.setMotors(-100, 100)
+    time.sleep(0.01)
+    
+rvr.setMotors(0, 0)
+time.sleep(1)
+print('success')
+
+time.sleep(1)
+rvr.setMotors(130, 130)
 #drive in direction of { average_values[0][0] }
+time.sleep(4)
 
-
-
+rvr.setMotors(0, 0)
 
 
 
