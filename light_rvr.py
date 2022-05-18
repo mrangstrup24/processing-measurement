@@ -85,26 +85,29 @@ tolerance = 4
 smoothed_heading = rvr.get_heading()
 smoothies = []
 smoothies.append(rvr.get_heading())
+smoothie_amount = 10
 """
-while not (smoothed_heading < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance):
+while not (rvr.get_heading() < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance)
 """
-while not (rvr.get_heading() < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance):
+time_start = time.monotonic()
+
+while not (smoothed_heading < average_values[0][0]+tolerance and smoothed_heading > average_values[0][0]-tolerance):
     rvr.update_sensors()
-    print(rvr.get_heading)
+    current_heading = rvr.get_heading()
+    print(f'{current_heading}')
+    smoothed_heading = (float(sum(smoothies)) + current_heading) / float(len(smoothies)+1)
+    print((float(sum(smoothies)) + current_heading) / float(len(smoothies)+1))
     
-    """"
-    smoothed_heading = (float(sum(smoothies)) + rvr.get_heading()) / float(len(smoothies)+1)
-    print(smoothed_heading)
     print('length of smoothies: ' + str(len(smoothies)))
     print('difference: ' + str(smoothed_heading-average_values[0][0]))
-    
-    if len(smoothies)+1 > 1000:
+
+    if len(smoothies)+1 > smoothie_amount:
         smoothies.pop(0)
     smoothies.append(rvr.get_heading())
-    """
-    rvr.setMotors(-100, 100)
+    rvr.setMotors(-110, 110)
     time.sleep(0.01)
-    
+    rvr.update_sensors()
+
 rvr.setMotors(0, 0)
 time.sleep(1)
 print('success')
