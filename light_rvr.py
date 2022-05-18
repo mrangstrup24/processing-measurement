@@ -34,7 +34,12 @@ def return_light(elem):
 
 rvr.sensor_start()
 
-
+""" Testing
+while True:
+    rvr.update_sensors()
+    print(light_sensor.value)
+    time.sleep(1)
+"""
 
 starting_time = time.monotonic()
 time_elapsed = time.monotonic() - starting_time
@@ -104,7 +109,16 @@ while not (smoothed_heading < average_values[0][0]+tolerance and smoothed_headin
     if len(smoothies)+1 > smoothie_amount:
         smoothies.pop(0)
     smoothies.append(rvr.get_heading())
-    rvr.setMotors(-110, 110)
+    rvr.setMotors(-120, 120)
+    time.sleep(0.01)
+    rvr.update_sensors()
+    
+while not (rvr.get_heading() < average_values[0][0]+tolerance and rvr.get_heading() > average_values[0][0]-tolerance):
+    rvr.update_sensors()
+    current_heading = rvr.get_heading()
+    print(f'{current_heading}')
+    print('difference: ' + str(current_heading-average_values[0][0]))
+    rvr.setMotors(-120, 120)
     time.sleep(0.01)
     rvr.update_sensors()
 
@@ -120,5 +134,6 @@ time.sleep(4)
 rvr.setMotors(0, 0)
 
 
+'''hekloko'''
 
 rvr.stop()
